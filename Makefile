@@ -1,4 +1,4 @@
-prefix := /usr
+prefix := /usr/local
 sysconfdir := /etc
 sbindir := $(prefix)/sbin
 datadir := $(prefix)/share
