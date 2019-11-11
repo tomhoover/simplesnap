@@ -148,6 +148,12 @@ done
 
 SSHCMD="${SSHCMD:-ssh}"
 WRAPCMD="${WRAPCMD:-simplesnapwrap}"
+ZFSCMD=/sbin/zfs
+
+if [ "$(uname)" = Darwin ] ; then
+   PATH=$PATH:/usr/local/bin
+   ZFSCMD="zfs"
+fi
 
 command -v gdate > /dev/null && DATE="gdate" || DATE="date"
 command -v gsed > /dev/null && SED="gsed" || SED="sed"
@@ -172,7 +178,7 @@ echo "_${SETNAME}" | $GREP -qv '^_-' || syntaxerror "Set name cannot begin with 
 TEMPLATE="__simplesnap_${SETNAME}_"
 [ -n "$DATASETDEST" -a -z "$BACKUPDATASET" ] && syntaxerror "--datasetdest given without --backupdataset"
 
-MOUNTPOINT="`zfs list -H -o mountpoint -t filesystem \"${STORE}\"`"
+MOUNTPOINT="`$ZFSCMD list -H -o mountpoint -t filesystem \"${STORE}\"`"
 
 logit "Store ${STORE} is mounted at ${MOUNTPOINT}"
 
@@ -187,7 +193,7 @@ listsnaps () {
 CHECKRETVAL=0
 
 runzfs () {
-  runcommand /sbin/zfs "$@"
+  runcommand $ZFSCMD "$@"
 }
 
 checkbackups () {
